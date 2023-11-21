@@ -95,6 +95,7 @@ setPause(pause);
 
 document.getElementById('undoButton').addEventListener('click', deleteStep);
 document.getElementById('stopButton').addEventListener('click', clearSteps);
+document.getElementById('localButton').addEventListener('click', setLocal);
 
 document.getElementById('pauseSwitch').addEventListener('change', () => {
     pause = document.getElementById('pauseSwitch').checked;
@@ -117,6 +118,7 @@ document.getElementsByName('loopChoice').forEach((element) => {
 
 
 map.on('click', function(e) {
+    console.log(e);
     if (!initMain(e)) {
         addStep(e.latlng);
     }
@@ -268,4 +270,14 @@ function navigate() {
             }
         }
     }
+}
+
+function setLocal()
+{
+    console.log('setLocal');
+    const local = document.getElementById('local').value;
+    const localArray = local.split(",");
+    const localLatlng = L.latLng(localArray[0], localArray[1]);
+    console.log(localLatlng);
+    addStep(localLatlng);
 }
