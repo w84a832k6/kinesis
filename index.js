@@ -47,10 +47,11 @@ const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 
 let marker = null;
+let marker2 = null;
 let markerLastPos = null;
 let markerShadowPos = null;
 
-const path = L.polyline([], {color: 'red'}).addTo(map);
+const path = L.polyline([], { color: 'red' }).addTo(map);
 let stepIndex = 0; // index of next step of path
 let speed = 1; // speed unit meter per second
 let loop = 'off'; // off; loop; uturn
@@ -60,7 +61,7 @@ const tickInterval = 1000; // update location per 1000ms
 const randomFactor = 0.2; // +-20% of origin value
 
 
-const tick = setInterval(function() {
+const tick = setInterval(function () {
     navigate();
 }, tickInterval);
 
@@ -95,7 +96,8 @@ setPause(pause);
 
 document.getElementById('undoButton').addEventListener('click', deleteStep);
 document.getElementById('stopButton').addEventListener('click', clearSteps);
-document.getElementById('localButton').addEventListener('click', setLocal);
+document.getElementById('localButton').addEventListener('click', setPoint);
+document.getElementById('goButton').addEventListener('click', goToPoint);
 
 document.getElementById('pauseSwitch').addEventListener('change', () => {
     pause = document.getElementById('pauseSwitch').checked;
@@ -117,7 +119,7 @@ document.getElementsByName('loopChoice').forEach((element) => {
 });
 
 
-map.on('click', function(e) {
+map.on('click', function (e) {
     console.log(e);
     if (!initMain(e)) {
         addStep(e.latlng);
@@ -128,7 +130,7 @@ map.on('zoomend', function () {
     saveConfig('zoom', map.getZoom());
 });
 
-map.on('moveend', function() {
+map.on('moveend', function () {
     const c = map.getCenter();
     saveConfig('latitude', c.lat);
     saveConfig('longitude', c.lng);
@@ -144,15 +146,15 @@ const random = (x) => {
 // return true if initialized marker, false if already initialized
 function initMain(e) {
     if (marker === null) {
-        marker = L.marker(e.latlng, {draggable: true});
+        marker = L.marker(e.latlng, { draggable: true });
         if (teleport(e.latlng)) {
             marker.addTo(map);
 
-            marker.on('mousedown', function(e) {
+            marker.on('mousedown', function (e) {
                 markerLastPos = e.latlng;
             });
 
-            marker.on('mouseup', function(e) {
+            marker.on('mouseup', function (e) {
                 if (!teleport(e.latlng)) {
                     marker.setLatLng(markerLastPos);
                 }
@@ -272,12 +274,22 @@ function navigate() {
     }
 }
 
-function setLocal()
-{
-    console.log('setLocal');
+function setPoint() {
+    console.log('setPoint');
+    const local = document.getElementById('local').value;
+    const localArray = local.split(",");
+    const localLatlng = L.latLng(localArray[0], localArray[1]);
+    console.log(localLatlng);
+    marker2 = L.marker(localLatlng, { draggable: false });
+    marker2.addTo(map);
+}
+
+function goToPoint() {
+    console.log('goToPoint');
     const local = document.getElementById('local').value;
     const localArray = local.split(",");
     const localLatlng = L.latLng(localArray[0], localArray[1]);
     console.log(localLatlng);
     addStep(localLatlng);
+    marker2.remove();
 }
