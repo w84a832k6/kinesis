@@ -41,7 +41,7 @@ def server(tunnel_host, tunnel_port):
         clients[sid][0].service.close()
         clients.pop(sid)
 
-    s = eventlet.listen(('localhost', 3000))
+    s = eventlet.listen(('localhost', 3001))
     [ip, port] = s.getsockname()
     print('--port', port)
     eventlet.wsgi.server(s, app)
